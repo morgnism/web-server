@@ -17,7 +17,7 @@ tasksRoutes.get('/', controllers.getAllTasks).post('/', controllers.createTask);
  * Routes for a task by id. Evalutes to `/tasks/:taskId`.
  */
 tasksRoutes
-  .get('/:taskId', controllers.getTask)
+  .get('/:taskId', controllers.getTask) // GET http://locahost:3000/tasks/1
   .put('/:taskId', controllers.updateTask)
   .delete('/:taskId', controllers.deleteTask);
 

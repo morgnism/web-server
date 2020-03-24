@@ -21,15 +21,16 @@ app.use(bodyParser.json());
 // ************************************
 
 // Handle routes for tasks.
-app.use('/tasks', tasksRoutes);
+app.use('/tasks', tasksRoutes); // http://localhost:3000/tasks
+// app.use('/users', usersRoutes); // http://localhost:3000/users
 
 // Handle 404 requests
-app.use(middleware.error404);
+app.use(middleware.error404); // http://loaclhost:3000/users
 
 // Handle 500 requests - applies mostly to live services
 app.use(middleware.error500);
 
 // listen on server port
-app.listen(port, () => {
+app.listen(port, function() {
   console.log(`Running on port: ${port}...`);
 });

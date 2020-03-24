@@ -1,6 +1,6 @@
 /**
  * Tables follow syntax:
- * - CREATE TABLE <table_name>(<column_name>, <data_type>, <options>)
+ * - CREATE TABLE <table_name>(<column_name> <data_type> <options>, ...)
  *
  * Create a table called `tasks` (case-insensitive), with
  * - id as an integer/number that can't have null values, auto-increment it
@@ -44,7 +44,7 @@ exports.INSERT_TASK = `INSERT INTO tasks (name) VALUES (?)`;
  *
  * NOTE: omitting `WHERE` will result in updating every existing entry.
  */
-exports.UPDATE_TASK = `UPDATE TASKS SET name = ?, status = ? WHERE id = ?`;
+exports.UPDATE_TASK = `UPDATE tasks SET name = ?, status = ? WHERE id = ?`;
 
 // Delete a task by id
 exports.DELETE_TASK = `DELETE FROM tasks WHERE id = ?`;
