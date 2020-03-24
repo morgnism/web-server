@@ -1,0 +1,21 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "description": "Example test app",
+  "main": "index.ts",
+  "scripts": {
+    "serve": "nodemon ./src",
+    "prod": "LOG_LEVEL='prod' nodemon ./src"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "morgan": "^1.9.1",
+    "mongoose": "^5.7.11"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
