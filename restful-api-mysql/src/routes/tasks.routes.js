@@ -1,7 +1,7 @@
 const controllers = require('../controllers/tasks.controller');
 const express = require('express');
 
-exports.tasksRoutes = express.Router();
+const tasksRoutes = express.Router();
 /**
  * Express routes for Tasks.
  *
@@ -18,5 +18,7 @@ tasksRoutes.get('/', controllers.getAllTasks).post('/', controllers.createTask);
  */
 tasksRoutes
   .get('/:taskId', controllers.getTask)
-  .post('/:taskId', controllers.updateTask)
+  .put('/:taskId', controllers.updateTask)
   .delete('/:taskId', controllers.deleteTask);
+
+module.exports = tasksRoutes;

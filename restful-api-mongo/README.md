@@ -47,11 +47,11 @@ PORT=4000 npm run prod # or with a specific port
 
 In mongodb, Schemas represent how the data will be presented in the database. The export Schema is wrapped in constructor provided by mongoose called `model()`. This function exposes a number of functions that you can perform that match the Schema being used.
 
-```typescript
-// to-do-list.model.ts
-export const Tasks = model('Tasks', TasksSchema);
+```javascript
+// tasks.model.js
+exports.Tasks = model('Tasks', TasksSchema);
 
-// to-do-list.controller.ts
+// tasks.controller.js
 Tasks.find(...);
 Tasks.findById(...);
 ...
@@ -65,7 +65,7 @@ Routes help direct what an `endpoint` should do. In RESful services, `endpoints`
 
 Express routes are defined by either one of these:
 
-```typescript
+```javascript
 const app = express();
 app.use('routePath').get((req, res) => { ... });
 
@@ -81,8 +81,8 @@ Controller help build up routes by providing some level of functionality to a sp
 
 Since these are really just functions, we don't need anything special from express to implement them. We just need to make sure that our function signature matches correctly to where we intend to use it:
 
-```typescript
-export const addTask = (req, res) => { ... }
+```javascript
+exports.addTask = (req, res) => { ... }
 // (req, res) <- function signature
 ```
 
@@ -94,9 +94,9 @@ Middleware is a kind of controller or function that controls the behaviour of a 
 
 We have the freedom to define what we want in our APIs, and error-handling is no exception. Error-handling controllers/functions follow a specific syntax that express recognizes:
 
-```typescript
+```javascript
 // notice the `err` parameter before `req` and `res`
-export const errorHandler = (err, req, res) => { ... }
+exports.errorHandler = (err, req, res) => { ... }
 ```
 
 ## Troubleshooting Notes
@@ -105,9 +105,9 @@ If you don't have the database for running this project created already, mongodb
 
 For example:
 
-```typescript
-// index.ts
-import mongoose = require('mongoose');
+```javascript
+// index.js
+const mongoose = require('mongoose');
 ...
 // tododb becomes the creted database upon connection if one doesn't exist
 mongoose.connect('mongodb://localhost/tododb', {
@@ -115,7 +115,7 @@ mongoose.connect('mongodb://localhost/tododb', {
   useUnifiedTopology: true
 });
 
-// to-do-list.model.ts
+// tasks.model.js
 // `Tasks` will become the name of the collection in tododb if one doesn't exist
-export const Tasks = model('Tasks', TasksSchema);
+exports.Tasks = model('Tasks', TasksSchema);
 ```

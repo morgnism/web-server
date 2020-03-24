@@ -4,8 +4,7 @@
   "description": "Example test app",
   "main": "index.ts",
   "scripts": {
-    "serve": "nodemon ./src",
-    "prod": "LOG_LEVEL='prod' nodemon ./src"
+    "serve": "nodemon ./src"
   },
   "author": "",
   "license": "ISC",

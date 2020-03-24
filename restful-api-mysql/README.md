@@ -2,15 +2,15 @@
 
 RESTful service power most any website today that receives and trasmits data via HTTP or HTTPS protocol. What you'll find below is what's used from express to run a simple set of Create, Read, Update, and Delete (CRUD) methods.
 
-Only the bare essentials are used to create the API service, and only the feature used by express and mongoose (mongodb client) will be explained in this documentation guide.
+Only the bare essentials are used to create the API service, and only the feature used by express and mongoose (mysql client) will be explained in this documentation guide.
 
-_Caveats: Running this app assumes you have a working mongodb instance preinstalled on you machine_
+_Caveats: Running this app assumes you have a working mysql instance preinstalled on you machine_
 
 ## What you'll find
 
 | Direcotry   | Description                                           |
 | ----------- | ----------------------------------------------------- |
-| models      | Representations of data to be used in mongodb.        |
+| queries     | Queries for data to be used in mysql.                 |
 | controllers | Functions to be bound and executed on routes.         |
 | routes      | A series of routes for handling HTTP requests.        |
 | middleware  | Other helful functions necessary for running the app. |
@@ -23,41 +23,52 @@ _Caveats: Running this app assumes you have a working mongodb instance preinstal
 npm install
 ```
 
-2. Spin up the mongodb instance:
+2. Spin up the mysql instance:
 
 ```bash
-mongod
+mysqld # this is harder to kill
+
+# or
+
+service mysql start # <- this is safer
 ```
+
+*NOTE: to stop run `service mysql stop`*
 
 3. Run server instance (either one works):
 
 ```bash
-npm run dev # dev server instance
-
-PORT=4000 npm run dev # or with a specific port
+npm start # dev server instance
 ```
 
 ```bash
 npm run prod # prod server instance
-
-PORT=4000 npm run prod # or with a specific port
 ```
 
-## Models and Schemas
+## Schemas
 
-In mongodb, Schemas represent how the data will be presented in the database. The export Schema is wrapped in constructor provided by mongoose called `model()`. This function exposes a number of functions that you can perform that match the Schema being used.
+In mysql, Schemas represent how the data will be presented in the database. The Schema is normally defined when creating the database for the first time. In this server's case:
 
-```typescript
-// to-do-list.model.ts
-export const Tasks = model('Tasks', TasksSchema);
-
-// to-do-list.controller.ts
-Tasks.find(...);
-Tasks.findById(...);
-...
+```sql
+CREATE TABLE IF NOT EXISTS tasks(
+  id int NOT NULL AUTO_INCREMENT,
+  name varchar(255) NOT NULL,
+  created_date DATETIME DEFAULT CURRENT_TIMESTAMP(),
+  status varchar(10) DEFAULT 'pending',
+  PRIMARY KEY (id)
+);
 ```
 
-Functions exposed by `model()` and more are all in mongoose's [documentation](https://mongoosejs.com/).
+The above example is known as SQL as can be exported in javascript and imported wherever we need it.
+
+```javascript
+// tasks.queries.js
+exports.CREATE_TASKS_TABLE = `CREATE TABLE IF NOT EXISTS tasks(...)`;
+
+// tasks.controller.js
+const queries = require('path/to/queries');
+con.query(queries.CREATE_TASKS_TABLE, params, callback);
+```
 
 ## Routes
 
@@ -65,7 +76,7 @@ Routes help direct what an `endpoint` should do. In RESful services, `endpoints`
 
 Express routes are defined by either one of these:
 
-```typescript
+```javascript
 const app = express();
 app.use('routePath').get((req, res) => { ... });
 
@@ -81,41 +92,54 @@ Controller help build up routes by providing some level of functionality to a sp
 
 Since these are really just functions, we don't need anything special from express to implement them. We just need to make sure that our function signature matches correctly to where we intend to use it:
 
-```typescript
-export const addTask = (req, res) => { ... }
-// (req, res) <- function signature
+```javascript
+exports.addTask = (req, res) => { ... } // function signature: (req, res) => {}
 ```
 
 ### Middleware
 
-Middleware is a kind of controller or function that controls the behaviour of a `request` or `response` within a server instance.
+Middleware is a kind of controller or function that controls the behaviour of a `request` or `response` within a server instance. These can be chained and used to modify anything about a request or response before.
 
 #### Error-handling Middlware Functions
 
 We have the freedom to define what we want in our APIs, and error-handling is no exception. Error-handling controllers/functions follow a specific syntax that express recognizes:
 
-```typescript
+```javascript
 // notice the `err` parameter before `req` and `res`
-export const errorHandler = (err, req, res) => { ... }
+exports.errorHandler = (err, req, res) => { ... }
 ```
 
 ## Troubleshooting Notes
 
-If you don't have the database for running this project created already, mongodb is handy and creates it for you with the collection you're attempting to write to as the same name as the existing model.
+If you don't have the database for running this project created already, mysql WIL NOT create this for you unless you configure it to.
 
 For example:
 
-```typescript
-// index.ts
-import mongoose = require('mongoose');
+```javascript
+// index.js
+const mysql = require('mysql');
 ...
-// tododb becomes the creted database upon connection if one doesn't exist
-mongoose.connect('mongodb://localhost/tododb', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+
+const con = mysql.createConnection({
+  host,
+  user,
+  password
 });
 
-// to-do-list.model.ts
-// `Tasks` will become the name of the collection in tododb if one doesn't exist
-export const Tasks = model('Tasks', TasksSchema);
+con.connect(function(err) {
+  if (err) throw err;
+  console.log('Connected!');
+
+  // tododb becomes the creted database upon connection if one doesn't exist
+  con.query(`CREATE DATABASE tasks`, function(err, result) {
+    if (err) throw err;
+    console.log('Database created or exists already!');
+  });
+
+  // this is also true for tables
+  con.query(queries.CREATE_TASKS_TABLE, function(err, result) {
+    if (err) throw err;
+    console.log('Table created or exists already!');
+  });
+});
 ```
