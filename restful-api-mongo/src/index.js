@@ -37,12 +37,6 @@ app.use(bodyParser.json());
 // ROUTE-HANDLING MIDDLEWARE FUNCTIONS
 // ************************************
 
-// Catch root incoming request
-app.use('/', function(req, res) {
-  res.status(200);
-  res.send({ message: 'Hello World!' });
-});
-
 // Handle routes for tasks.
 app.use('/tasks', tasksRoutes);
 

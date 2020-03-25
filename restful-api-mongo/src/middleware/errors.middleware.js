@@ -20,3 +20,9 @@ exports.error500 = function(error, req, res, next) {
     }
   });
 };
+
+exports.logger = function(port) {
+  return function() {
+    console.log(`Running on port: ${port}...`);
+  };
+};

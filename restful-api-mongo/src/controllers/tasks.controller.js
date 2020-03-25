@@ -1,8 +1,7 @@
-const tasksModel = require('../models/to-do-list.model');
-const Tasks = tasksModel.Tasks;
+const Tasks = require('../models/tasks.model');
 
 exports.getAllTasks = function(req, res) {
-  Tasks.find({}, (err, data) => {
+  Tasks.find({}, function(err, data) {
     if (err) {
       res.send(err);
     }
