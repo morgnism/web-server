@@ -15,6 +15,26 @@ _Caveats: Running this app assumes you have a working mysql instance preinstalle
 | routes      | A series of routes for handling HTTP requests.        |
 | middleware  | Other helful functions necessary for running the app. |
 
+## MySQL Setup and Installation
+
+In order to run the the mysql server, you need an installation of mysql with root access.
+
+1. First install Homebrew.
+
+2. Then...
+
+```bash
+brew install mysql
+```
+
+3. Give access right to `root@localhost`.
+
+```bash
+mysql -u root -e "ALTER USER root@localhost IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
+```
+
+**NOTE: once configured, move onto the next steps.**
+
 ## Setup and Install
 
 1. Install all packages:
@@ -33,7 +53,7 @@ mysqld # this is harder to kill
 service mysql start # <- this is safer
 ```
 
-*NOTE: to stop run `service mysql stop`*
+_NOTE: to stop run `service mysql stop`_
 
 3. Run server instance (either one works):
 
