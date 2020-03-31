@@ -1,4 +1,4 @@
-# Example RESTful API
+# Example MySQL RESTful API
 
 RESTful service power most any website today that receives and trasmits data via HTTP or HTTPS protocol. What you'll find below is what's used from express to run a simple set of Create, Read, Update, and Delete (CRUD) methods.
 
@@ -19,7 +19,7 @@ _Caveats: Running this app assumes you have a working mysql instance preinstalle
 
 In order to run the the mysql server, you need an installation of mysql with root access.
 
-1. First install Homebrew.
+1. First install [Homebrew](https://brew.sh/).
 
 2. Then...
 
@@ -46,24 +46,43 @@ npm install
 2. Spin up the mysql instance:
 
 ```bash
-mysqld # this is harder to kill
-
-# or
-
-service mysql start # <- this is safer
+mysqld
 ```
 
-_NOTE: to stop run `service mysql stop`_
-
-3. Run server instance (either one works):
+3. Run server instance:
 
 ```bash
-npm start # dev server instance
+npm start
 ```
 
+
+
+## MySQL Shell
+
+Running the shell allows you to directly manage you databases and collections. *This is for advanced use and shouldn't be used without looking at the documentation or googling further instructions.*
+
+In one terminal:
+
 ```bash
-npm run prod # prod server instance
+mysqld
+
+# to stop the service
+lsof -i:3306
+
+# this will show all running processes
+# copy the process id
+kill -9 <paste_process_id_here>
 ```
+
+In another terminal window/tab:
+
+```bash
+mysql
+# clost the shell with
+quit # or exit
+```
+
+
 
 ## Schemas
 
