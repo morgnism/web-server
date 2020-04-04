@@ -15,17 +15,19 @@
  */
 exports.CREATE_TASKS_TABLE = `CREATE TABLE IF NOT EXISTS tasks(
   id int NOT NULL AUTO_INCREMENT,
+  user_id varchar(50) NOT NULL,
   name varchar(255) NOT NULL,
   created_date DATETIME DEFAULT CURRENT_TIMESTAMP(),
   status varchar(10) DEFAULT 'pending',
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  FOREIGN KEY (user_id) REFERENCES users(id) 
 )`;
 
 // Get every task
 exports.ALL_TASKS = `SELECT * FROM tasks`;
 
 // Get a single task by id
-exports.SINGLE_TASKS = `SELECT * FROM tasks WHERE id = ?`;
+exports.SINGLE_TASK = `SELECT * FROM tasks WHERE user_id = ?`;
 
 /**
  * Insert follows syntax:
@@ -36,7 +38,7 @@ exports.SINGLE_TASKS = `SELECT * FROM tasks WHERE id = ?`;
  * - column names match the order the are in the table
  * - `?` allow us to use params in our controllers
  */
-exports.INSERT_TASK = `INSERT INTO tasks (name) VALUES (?)`;
+exports.INSERT_TASK = `INSERT INTO tasks (user_id, name) VALUES (?, ?)`;
 
 /**
  * Update follows syntax:
