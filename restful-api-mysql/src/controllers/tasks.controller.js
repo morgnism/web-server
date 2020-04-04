@@ -20,7 +20,7 @@ exports.getAllTasks = function(req, res) {
 
 // http://localhost:3000/tasks/1
 exports.getTask = function(req, res) {
-  con.query(queries.SINGLE_TASKS, [req.params.taskId], function(err, result) {
+  con.query(queries.SINGLE_TASK, [req.params.taskId], function(err, result) {
     if (err) {
       res.send(err);
     }
