@@ -15,6 +15,10 @@ _Caveats: Running this app assumes you have a working mysql instance preinstalle
 | routes      | A series of routes for handling HTTP requests.        |
 | middleware  | Other helful functions necessary for running the app. |
 
+### First Time Running
+
+After you've cloned the project, you'll need to have a database created in mysql called tododb.
+
 ## MySQL Setup and Installation
 
 In order to run the the mysql server, you need an installation of mysql with root access.
@@ -55,11 +59,9 @@ mysqld
 npm start
 ```
 
-
-
 ## MySQL Shell
 
-Running the shell allows you to directly manage you databases and collections. *This is for advanced use and shouldn't be used without looking at the documentation or googling further instructions.*
+Running the shell allows you to directly manage you databases and collections. _This is for advanced use and shouldn't be used without looking at the documentation or googling further instructions._
 
 In one terminal:
 
@@ -81,8 +83,6 @@ mysql
 # clost the shell with
 quit # or exit
 ```
-
-
 
 ## Schemas
 
