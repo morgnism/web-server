@@ -1,5 +1,12 @@
 const express = require('express');
-const controllers = require('../controllers/tasks.controller');
+const {
+  getAllTasks,
+  createTask,
+  getTask,
+  updateTask,
+  deleteTask,
+} = require('../controllers/tasks.controller');
+const canAccess = require('../middleware/auth.middleware');
 
 const tasksRoutes = express.Router();
 /**
@@ -11,14 +18,14 @@ const tasksRoutes = express.Router();
 /**
  * Routes for all tasks. Evaluates to `/tasks/`.
  */
-tasksRoutes.get('/', controllers.getAllTasks).post('/', controllers.createTask);
+tasksRoutes.get('/', canAccess, getAllTasks).post('/', canAccess, createTask);
 
 /**
  * Routes for a task by id. Evalutes to `/tasks/:taskId`.
  */
 tasksRoutes
-  .get('/:taskId', controllers.getTask) // GET http://locahost:3000/tasks/1
-  .put('/:taskId', controllers.updateTask)
-  .delete('/:taskId', controllers.deleteTask);
+  .get('/:taskId', canAccess, getTask) // GET http://locahost:3000/tasks/1
+  .put('/:taskId', canAccess, updateTask)
+  .delete('/:taskId', canAccess, deleteTask);
 
 module.exports = tasksRoutes;
