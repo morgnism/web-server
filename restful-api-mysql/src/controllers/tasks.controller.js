@@ -1,5 +1,12 @@
-const con = require('../db-config');
-const queries = require('../queries/tasks.queries');
+const connection = require('../db-config');
+const {
+  ALL_TASKS,
+  SINGLE_TASK,
+  INSERT_TASK,
+  UPDATE_TASK,
+  DELETE_TASK,
+} = require('../queries/tasks.queries');
+const query = require('../utils/query');
 
 /**
  * CRUD - Create, Read, Update, Delete
@@ -9,40 +16,72 @@ const queries = require('../queries/tasks.queries');
  * DELETE - Delete
  */
 
-exports.getAllTasks = function(req, res) {
-  con.query(queries.ALL_TASKS, function(err, result, fields) {
-    if (err) {
-      res.send(err);
-    }
-    res.json(result);
+// http://localhost:3000/tasks
+exports.getAllTasks = async (req, res) => {
+  // establish connection
+  const con = await connection().catch((err) => {
+    throw err;
   });
+
+  // query all tasks
+  const tasks = await query(con, ALL_TASKS).catch((err) => {
+    res.send(err);
+  });
+
+  if (tasks.length) {
+    res.json(tasks);
+  }
 };
 
 // http://localhost:3000/tasks/1
-exports.getTask = function(req, res) {
-  con.query(queries.SINGLE_TASK, [req.params.taskId], function(err, result) {
-    if (err) {
+exports.getTask = async (req, res) => {
+  // establish connection
+  const con = await connection().catch((err) => {
+    throw err;
+  });
+
+  // query all task
+  const task = await query(con, SINGLE_TASK, [req.params.taskId]).catch(
+    (err) => {
       res.send(err);
     }
-    res.json(result);
-  });
+  );
+
+  if (task.length) {
+    res.json(task);
+  }
 };
 
-// http://localhost:3000/tasks/1
+// http://localhost:3000/tasks
 /**
  * POST request -
  * {
  *  name: 'A task name'
  * }
  */
-exports.createTask = function(req, res) {
-  con.query(queries.INSERT_TASK, [req.body.name], function(err, result) {
-    if (err) {
-      res.send(err);
-    }
+exports.createTask = async (req, res) => {
+  // verify valid token
+  const decoded = req.user; // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
+
+  // take result of middleware check
+  if (decoded.id) {
+    // establish connection
+    const con = await connection().catch((err) => {
+      throw err;
+    });
+
+    // query add task
+    const result = await query(con, INSERT_TASK, [req.body.name]).catch(
+      (err) => {
+        res.send(err);
+      }
+    );
     console.log(result);
-    res.json({ message: 'Number of records inserted: ' + result.affectedRows });
-  });
+
+    if (result.affectedRows === 1) {
+      res.json({ message: 'Added task successfully!' });
+    }
+  }
 };
 
 // http://localhost:3000/tasks/1
@@ -53,25 +92,41 @@ exports.createTask = function(req, res) {
  *  state: 'completed'
  * }
  */
-exports.updateTask = function(req, res) {
-  con.query(
-    queries.UPDATE_TASK,
-    [req.body.name, req.body.status, req.params.taskId],
-    function(err, data) {
-      if (err) {
-        res.send(err);
-      }
-      res.json(data);
-    }
-  );
+exports.updateTask = async (req, res) => {
+  // establish connection
+  const con = await connection().catch((err) => {
+    throw err;
+  });
+
+  // query update task
+  const result = await query(con, UPDATE_TASK, [
+    req.body.name,
+    req.body.status,
+    req.params.taskId,
+  ]).catch((err) => {
+    res.send(err);
+  });
+
+  if (result.affectedRows === 1) {
+    res.json(result);
+  }
 };
 
 // http://localhost:3000/tasks/1
-exports.deleteTask = function(req, res) {
-  con.query(queries.DELETE_TASK, [req.params.taskId], function(err) {
-    if (err) {
+exports.deleteTask = async (req, res) => {
+  // establish connection
+  const con = await connection().catch((err) => {
+    throw err;
+  });
+
+  // query delete task
+  const result = await query(con, DELETE_TASK, [req.params.taskId]).catch(
+    (err) => {
       res.send(err);
     }
+  );
+
+  if (result.affectedRows === 1) {
     res.json({ message: 'Deleted successfully.' });
-  });
+  }
 };
