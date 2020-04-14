@@ -15,9 +15,8 @@ const password = process.env.DB_PASS || 'password';
 // Get the Database from Environment or use default
 const database = process.env.DB_DATABASE || 'tododb';
 
-// Create the connection with required details
-module.exports = async () =>
-  new Promise(async (resolve, reject) => {
+const connection = async () =>
+  new Promise((resolve, reject) => {
     const con = mysql.createConnection({
       host,
       user,
@@ -25,19 +24,37 @@ module.exports = async () =>
       database,
     });
 
-    const userTableCreated = await query(con, CREATE_USERS_TABLE).catch(
-      (err) => {
+    con.connect((err) => {
+      if (err) {
         reject(err);
+        return;
       }
-    );
+    });
 
-    const tasksTableCreated = await query(con, CREATE_TASKS_TABLE).catch(
-      (err) => {
-        reject(err);
-      }
-    );
-
-    if (!!userTableCreated && !!tasksTableCreated) {
-      resolve(con);
-    }
+    resolve(con);
   });
+
+// Create the connection with required details
+(async () => {
+  const _con = await connection().catch((err) => {
+    throw err;
+  });
+
+  const userTableCreated = await query(_con, CREATE_USERS_TABLE).catch(
+    (err) => {
+      console.log(err);
+    }
+  );
+
+  const tasksTableCreated = await query(_con, CREATE_TASKS_TABLE).catch(
+    (err) => {
+      console.log(err);
+    }
+  );
+
+  if (!!userTableCreated && !!tasksTableCreated) {
+    console.log('Tables Created!');
+  }
+})();
+
+module.exports = connection;
