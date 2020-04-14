@@ -1,16 +1,20 @@
 const mysql = require('mysql');
-const { CREATE_USERS_TABLE } = require('./queries/user.queries');
-const { CREATE_TASKS_TABLE } = require('./queries/tasks.queries');
+const {
+  CREATE_USERS_TABLE
+} = require('./queries/user.queries');
+const {
+  CREATE_TASKS_TABLE
+} = require('./queries/tasks.queries');
 const query = require('./utils/query');
 
 // Get the Host from Environment or use default
 const host = process.env.DB_HOST || 'localhost';
 
 // Get the User for DB from Environment or use default
-const user = process.env.DB_USER || 'root';
+const user = process.env.DB_USER || 'frank';
 
 // Get the Password for DB from Environment or use default
-const password = process.env.DB_PASS || 'password';
+const password = process.env.DB_PASS || 'res0@L78';
 
 // Get the Database from Environment or use default
 const database = process.env.DB_DATABASE || 'tododb';
