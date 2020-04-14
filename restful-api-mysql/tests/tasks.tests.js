@@ -43,7 +43,7 @@ describe('Tasks API Service', function () {
     const newTask = {
       name: 'New test task!',
     };
-    const expected = { message: 'Add task successfully!' };
+    const expected = { msg: 'Add task successfully!' };
 
     chai
       .request('http://localhost:3000')

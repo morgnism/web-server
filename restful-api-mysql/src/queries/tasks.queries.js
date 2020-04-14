@@ -14,20 +14,23 @@
  * - defaults always specifed last (helps with inserting)
  */
 exports.CREATE_TASKS_TABLE = `CREATE TABLE IF NOT EXISTS tasks(
-  id int NOT NULL AUTO_INCREMENT,
-  user_id varchar(50) NOT NULL,
-  name varchar(255) NOT NULL,
+  task_id int NOT NULL AUTO_INCREMENT,
+  user_id int NOT NULL,
+  task_name varchar(255) NOT NULL,
   created_date DATETIME DEFAULT CURRENT_TIMESTAMP(),
   status varchar(10) DEFAULT 'pending',
-  PRIMARY KEY (id),
-  FOREIGN KEY (user_id) REFERENCES users(user_id) 
+  PRIMARY KEY (task_id),
+  FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 )`;
 
 // Get every task
-exports.ALL_TASKS = `SELECT * FROM tasks`;
+exports.ALL_TASKS = (userId) => `SELECT * FROM tasks WHERE user_id = ${userId}`;
 
 // Get a single task by id
-exports.SINGLE_TASK = `SELECT * FROM tasks WHERE id = ?`;
+exports.SINGLE_TASK = (userId, taskId) =>
+  `SELECT * FROM tasks WHERE user_id = ${userId} AND task_id = ${taskId}`;
 
 /**
  * Insert follows syntax:
@@ -38,7 +41,8 @@ exports.SINGLE_TASK = `SELECT * FROM tasks WHERE id = ?`;
  * - column names match the order the are in the table
  * - `?` allow us to use params in our controllers
  */
-exports.INSERT_TASK = `INSERT INTO tasks (name) VALUES (?)`;
+exports.INSERT_TASK = (userId, taskName) =>
+  `INSERT INTO tasks (user_id, task_name) VALUES (${userId}, ${taskName})`;
 
 /**
  * Update follows syntax:
@@ -46,7 +50,9 @@ exports.INSERT_TASK = `INSERT INTO tasks (name) VALUES (?)`;
  *
  * NOTE: omitting `WHERE` will result in updating every existing entry.
  */
-exports.UPDATE_TASK = `UPDATE tasks SET name = ?, status = ? WHERE id = ?`;
+exports.UPDATE_TASK = (userId, taskId, newValues) =>
+  `UPDATE tasks SET ${newValues} WHERE user_id = ${userId} AND task_id = ${taskId}`;
 
 // Delete a task by id
-exports.DELETE_TASK = `DELETE FROM tasks WHERE id = ?`;
+exports.DELETE_TASK = (userId, taskId) =>
+  `DELETE FROM tasks WHERE user_id = ${userId} AND task_id = ${taskId}`;
