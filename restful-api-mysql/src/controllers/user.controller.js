@@ -21,12 +21,12 @@ exports.getMe = async (req, res) => {
 
     const user = await query(con, GET_ME_BY_USER_ID, [decoded.id]).catch(
       (err) => {
-        res.status(500).send({ msg: 'Could not find the user.' });
+        res.status(500).json({ msg: 'Could not find the user.' });
       }
     );
 
     if (!user.length) {
-      res.status(400).send({ msg: 'No user found.' });
+      res.status(400).json({ msg: 'No user found.' });
     }
     res.status(200).send(user);
   }
@@ -43,7 +43,7 @@ exports.updateMe = async function (req, res) {
     req.user.id,
   ]).catch((err) => {
     res.status(500);
-    res.send({ msg: 'Could not retrieve user.' });
+    res.json({ msg: 'Could not retrieve user.' });
   });
 
   // checked for password changed
@@ -64,7 +64,7 @@ exports.updateMe = async function (req, res) {
       passwordHash,
       user[0].id,
     ]).catch((err) => {
-      res.status(500).send({ msg: 'Could not update user settings.' });
+      res.status(500).json({ msg: 'Could not update user settings.' });
     });
 
     if (result.affectedRows === 1) {

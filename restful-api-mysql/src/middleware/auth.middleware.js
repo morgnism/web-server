@@ -2,14 +2,15 @@ const { jwtconfig, verifyToken } = require('../utils/jwt-helpers');
 
 module.exports = (req, res, next) => {
   const authHeader = req.headers['auth-token'] || req.headers['authorization'];
-  const accessToken = authHeader.split(' ')[1];
 
-  if (!accessToken) {
+  if (!authHeader) {
     // stop user auth validation
     res
       .status(401)
-      .send({ auth: false, msg: 'Access Denied. No token provided.' });
+      .json({ auth: false, msg: 'Access Denied. No token provided.' });
   }
+
+  const accessToken = authHeader.split(' ')[1];
 
   try {
     // verify the token is correct
@@ -17,6 +18,6 @@ module.exports = (req, res, next) => {
     req.user = user;
     next();
   } catch (err) {
-    res.status(403).send({ msg: 'Invalid Token' });
+    res.status(403).json({ msg: 'Invalid Token' });
   }
 };

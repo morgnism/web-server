@@ -30,7 +30,7 @@ const verifyToken = (token, secret, req, res) => {
   try {
     return jwt.verify(token, secret);
   } catch {
-    res.status(500).send({ auth: false, message: 'Invalid token.' });
+    res.status(500).json({ auth: false, msg: 'Invalid token.' });
   }
 };
 
