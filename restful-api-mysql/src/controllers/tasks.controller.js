@@ -26,12 +26,13 @@ exports.getAllTasks = async (req, res) => {
   });
 
   // query all tasks
-  const tasks = await query(con, ALL_TASKS(req.user.id)).catch(
+  const tasks = await query(con, ALL_TASKS(req.user.id), []).catch(
     serverError(res)
   );
 
+  // [] === true, 0 === false
   if (!tasks.length) {
-    res.status(400).json({ msg: 'No tasks available for this user.' });
+    res.status(200).json({ msg: 'No tasks available for this user.' });
   }
   res.json(tasks);
 };
@@ -91,12 +92,15 @@ exports.createTask = async (req, res) => {
 /**
  * Build up values string.
  *
- * @example 'key1 = value1, key2 = value2, ...'
+ * @example
+ * 'key1 = value1, key2 = value2, ...'
+ * "task_name = \'Task 1\', status = \'complete\', date = \'<today's_date>\'"
  */
 const _buildValuesString = (req) => {
   const body = req.body;
   const values = Object.keys(body).map(
-    (key) => `${key} = ${mysql.escape(body[key])}`
+    // [task_name, status].map()
+    (key) => `${key} = ${mysql.escape(body[key])}` // 'New 1 task name'
   );
 
   values.push(`created_date = NOW()`); // update current date and time
