@@ -42,7 +42,9 @@ exports.register = async (req, res) => {
         .json({ msg: 'Could not register user. Please try again later.' });
     });
 
-    res.json({ msg: 'New user created!' });
+    if (result.affect === 1) {
+      res.json({ msg: 'New user created!' });
+    }
   }
 };
 
