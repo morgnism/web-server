@@ -1,4 +1,4 @@
-const mysql = require('mysql');
+const escape = require('mysql').escape;
 const connection = require('../db-config');
 const {
   ALL_TASKS,
@@ -75,7 +75,7 @@ exports.createTask = async (req, res) => {
     });
 
     // query add task
-    const taskName = mysql.escape(req.body.task_name);
+    const taskName = escape(req.body.task_name);
     const result = await query(con, INSERT_TASK(user.id, taskName)).catch(
       serverError(res)
     );
@@ -100,7 +100,7 @@ const _buildValuesString = (req) => {
   const body = req.body;
   const values = Object.keys(body).map(
     // [task_name, status].map()
-    (key) => `${key} = ${mysql.escape(body[key])}` // 'New 1 task name'
+    (key) => `${key} = ${escape(body[key])}` // 'New 1 task name'
   );
 
   values.push(`created_date = NOW()`); // update current date and time

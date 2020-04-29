@@ -7,6 +7,7 @@ const {
   GET_ME_BY_USER_ID_WITH_PASSWORD,
   UPDATE_USER,
 } = require('../queries/user.queries');
+const escape = require('../utils/escape');
 
 exports.getMe = async (req, res) => {
   // verify valid token
@@ -19,14 +20,16 @@ exports.getMe = async (req, res) => {
       throw err;
     });
 
-    const user = await query(con, GET_ME_BY_USER_ID, [user.id]).catch((err) => {
-      res.status(500).json({ msg: 'Could not find the user.' });
-    });
+    const existingUser = await query(con, GET_ME_BY_USER_ID(user.id)).catch(
+      (err) => {
+        res.status(500).json({ msg: 'Could not find the user.' });
+      }
+    );
 
-    if (!user.length) {
-      res.status(400).json({ msg: 'No user found.' });
+    if (existingUser.length) {
+      res.status(200).send(existingUser);
     }
-    res.status(200).send(user);
+    res.status(400).json({ msg: 'No user found.' });
   }
 };
 
@@ -37,31 +40,38 @@ exports.updateMe = async function (req, res) {
   });
 
   // check for existing user first
-  const user = await query(con, GET_ME_BY_USER_ID_WITH_PASSWORD, [
-    req.user.id,
-  ]).catch((err) => {
-    res.status(500);
-    res.json({ msg: 'Could not retrieve user.' });
+  const existingUser = await query(
+    con,
+    GET_ME_BY_USER_ID_WITH_PASSWORD(req.user.id)
+  ).catch((err) => {
+    console.log(err);
+    res.status(500).json({ msg: 'Could not retrieve user.' });
   });
 
   // checked for password changed
   // SAME LOGIC AS CHECKING FOR A VALID PASSWORD
   const passwordUnchanged = await bcrypt
-    .compare(req.body.password, user[0].password)
+    .compare(req.body.password, existingUser[0].password)
+    .then(async (changed) => {})
     .catch((err) => {
       res.json(500).json({ msg: 'Invalid password!' });
     });
 
   if (!passwordUnchanged) {
-    const passwordHash = bcrypt.hashSync(req.body.password);
+    const hash = bcrypt.hashSync(req.body.password);
+    const { username, email, password } = escape({
+      ...req.body,
+      password: hash,
+    });
+
+    console.log(username, email, password);
 
     // perform update
-    const result = await query(con, UPDATE_USER, [
-      req.body.username,
-      req.body.email,
-      passwordHash,
-      user[0].id,
-    ]).catch((err) => {
+    const result = await query(
+      con,
+      UPDATE_USER(username, email, password, existingUser[0].user_id)
+    ).catch((err) => {
+      console.log(err);
       res.status(500).json({ msg: 'Could not update user settings.' });
     });
 
