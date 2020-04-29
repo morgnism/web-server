@@ -83,9 +83,6 @@ exports.login = async (req, res) => {
         res.json(500).json({ msg: 'Invalid password!' });
       });
 
-    console.log(user);
-    console.log(password, user[0].password);
-
     if (!validPass) {
       res.status(400).json({ msg: 'Invalid password!' });
     }
@@ -110,6 +107,8 @@ exports.login = async (req, res) => {
         expires_in: 86400,
         refresh_token: refreshToken,
       });
+  } else {
+    res.status(401).json({ msg: 'Invalid login credentials.' });
   }
 };
 
