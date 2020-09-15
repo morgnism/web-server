@@ -1,10 +1,13 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 
-const tasksRoutes = require('./routes/tasks.routes');
-const middleware = require('./middleware/errors.middleware');
+const authRoutes = require('./routes/auth.routes');
+const userRoutes = require('./routes/user.routes');
+const heroesRoutes = require('./routes/heroes.routes');
+const { error404, error500 } = require('./middleware/errors.middleware');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -12,9 +15,9 @@ const logLevel = process.env.LOG_LEVEL || 'dev';
 
 // Make connection to the db
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/tododb', {
+mongoose.connect(process.env.MONGODB_URL, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 });
 
 // Store the instance of db so we can listen to events.
@@ -22,7 +25,7 @@ const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
 
-db.once('open', function() {
+db.once('open', () => {
   console.log('Connection Successful!');
 });
 
@@ -33,21 +36,25 @@ app.use(logger(logLevel));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// Allow websites to talk to our API service.
+app.use(cors());
+
 // ************************************
 // ROUTE-HANDLING MIDDLEWARE FUNCTIONS
 // ************************************
 
-// Handle routes for tasks.
-app.use('/tasks', tasksRoutes);
+// Partial API endpoints
+app.use('/api/auth', authRoutes); // http://localhost:3000/api/auth
+app.use('/api/user', userRoutes); // http://localhost:3000/api/user
+app.use('/api/heroes', heroesRoutes); // http://localhost:3000/api/heroes
 
 // Handle 404 requests
-app.use(middleware.error404);
+app.use(error404);
 
-// Handle 500 requests
-// applies mostly to live services
-app.use(middleware.error500);
+// Handle 500 requests - applies mostly to live services
+app.use(error500);
 
 // listen on server port
-app.listen(port, function() {
+app.listen(port, () => {
   console.log(`Running on port: ${port}...`);
 });

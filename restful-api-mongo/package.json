@@ -4,15 +4,20 @@
   "description": "Example test app",
   "main": "index.ts",
   "scripts": {
-    "serve": "nodemon ./src"
+    "serve": "env-cmd -f ./.env nodemon ./src"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "env-cmd": "^10.1.0",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.7.11",
     "morgan": "^1.9.1",
-    "mongoose": "^5.7.11"
+    "validator": "^13.1.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"
