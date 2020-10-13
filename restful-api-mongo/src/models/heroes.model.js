@@ -23,7 +23,7 @@ const heroesSchema = new Schema({
         enum: ['S', 'A', 'B', 'C', 'D'],
       },
     ],
-    default: ['D'],
+    default: 'D',
   },
   rent: {
     type: Number,
