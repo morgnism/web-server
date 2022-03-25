@@ -84,6 +84,16 @@ mysql
 quit # or exit
 ```
 
+### Create a Database
+
+Before running you server you'll need a database. For this project, run the following in the mysql shell:
+
+```bash
+mysql> CREATE DATABASE tododb;
+```
+
+Note: the ending semicolon is important to end all statements.
+
 ## Schemas
 
 In mysql, Schemas represent how the data will be presented in the database. The Schema is normally defined when creating the database for the first time. In this server's case:
